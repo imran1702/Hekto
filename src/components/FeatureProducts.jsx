@@ -4,14 +4,17 @@ import img from "../assets/image 1.png"
 import { IoCartOutline } from 'react-icons/io5'
 import { CiHeart, CiZoomIn } from 'react-icons/ci'
 import { ApiData } from './ContextApi'
+import { useDispatch } from "react-redux"
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { Link } from 'react-router-dom'
 import { FaAngleLeft, FaAngleRight } from 'react-icons/fa'
+import { addToCart, favouriteProduct } from './slices/productSlice'
 
 const FeatureProducts = () => {
   let data = useContext(ApiData)
+  let dispatch = useDispatch()
 
   // slick arrows start
   function SampleNextArrow(props) {
@@ -57,17 +60,19 @@ const FeatureProducts = () => {
             <h2 className='text-[#1A0B5B] font-jose text-[42px]'>Featured Products</h2>
           </div>
           <div className="justify-between">
-            <Link to="/productdetails">
+            <Link to="/products">
               <Slider {...settings}>
                 {data.map((item) => (
                   <div className="group relative px-3">
                     <div className="flex gap-3 absolute left-3 top-1 text-[25px] invisible group-hover:visible group-hover:text-[#fff]">
-                      <div className="hover:text-[#FB2E86]">
+                      <div onClick={()=>dispatch(addToCart({...item, qun:1}))} className="hover:text-[#FB2E86]">
                         <IoCartOutline />
                       </div>
-                      <div className="hover:text-[#FB2E86]">
-                        <CiHeart />
-                      </div>
+                      <Link to="/favouriteProducts">
+                        <div onClick={()=>dispatch(favouriteProduct(item))} className="hover:text-[#FB2E86]">
+                          <CiHeart />
+                        </div>
+                      </Link>
                       <div className="hover:text-[#FB2E86]">
                         <CiZoomIn />
                       </div>

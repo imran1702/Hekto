@@ -2,10 +2,10 @@ import React from 'react'
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import banner from "../assets/banner.png"
 import { Link } from 'react-router-dom';
 
-const Banner = () => {
+const Banner = ({image}) => {
+    
 
     var bannerSlick = {
     dots: true,
@@ -22,17 +22,17 @@ const Banner = () => {
              <Slider {...bannerSlick}>
                 <div className="">
                     <Link>
-                    <img src={banner} alt="" />
+                    <img src={image} alt="" />
                     </Link>
                 </div>
                 <div className="">
                     <Link>
-                    <img src={banner} alt="" />
+                    <img src={image} alt="" />
                     </Link>
                 </div>
                 <div className="">
                     <Link>
-                    <img src={banner} alt="" />
+                    <img src={image} alt="" />
                     </Link>
                 </div>
                 </Slider>

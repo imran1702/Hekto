@@ -1,14 +1,17 @@
 import React from 'react'
 import Banner from '../Banner'
 import FeatureProducts from '../FeatureProducts'
-import { ContextApi } from '../ContextApi'
+import LatestProduct from '../LatestProduct'
+import img from "../../assets/banner.png"
+import img2 from "../../assets/unique feature sofa.png"
 
 const Home = () => {
   return (
     <>
-       <Banner />
+       <Banner image={img}/>
        <FeatureProducts />
-       <ContextApi></ContextApi>
+       <LatestProduct />
+       <Banner image={img2}/>
     </>
   )
 }
