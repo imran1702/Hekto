@@ -1,6 +1,6 @@
-import React from 'react'
-import Container from '../Container'
-import { Link } from 'react-router-dom'
+import React from "react";
+import Container from "../Container";
+import { Link } from "react-router-dom";
 
 const Pages = () => {
   return (
@@ -60,7 +60,7 @@ const Pages = () => {
         </div>
       </Container>
     </section>
-  )
-}
+  );
+};
 
-export default Pages
+export default Pages;
