@@ -22,19 +22,19 @@ const Banner = ({image}) => {
              <Slider {...bannerSlick}>
                 <div className="">
                     <Link>
-                    <img src={image} alt="" />
+                    <img className='min-w-full' src={image} alt="" />
+                    </Link>
+                </div>
+                {/* <div className="">
+                    <Link>
+                    <img className='min-w-full' src={image} alt="" />
                     </Link>
                 </div>
                 <div className="">
                     <Link>
-                    <img src={image} alt="" />
+                    <img className='min-w-full' src={image} alt="" />
                     </Link>
-                </div>
-                <div className="">
-                    <Link>
-                    <img src={image} alt="" />
-                    </Link>
-                </div>
+                </div> */}
                 </Slider>
            
         </section>

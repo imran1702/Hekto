@@ -37,9 +37,9 @@ const Post = ({
       <Container>
         {categoryFilterProduct.length > 0 ? (
           <>
-            <div className="flex flex-wrap">
+            <div className="grid grid-cols-2 md:grid-cols-4">
               {categoryFilterProduct.map((item) => (
-                <div className="w-1/4 px-3 mb-3 relative group shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]">
+                <div className="px-3 mb-3 relative group shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]">
                   <Link to={`/products/${item.id}`}>
                     <div className="">
                       <img src={item.image_path} alt="" />
@@ -98,12 +98,12 @@ const Post = ({
           </>
         ) : (
           <>
-            <div className="flex flex-wrap">
+            <div className="grid grid-cols-2 md:grid-cols-4">
               {allPage.map((item) => (
-                <div className="w-1/4 px-3 mb-3 relative group shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]">
+                <div className="px-3 mb-3 relative group shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]">
                   <Link to={`/products/${item.id}`}>
                     <div className="">
-                      <img src={item.image_path} alt="" />
+                      <img className="w-full" src={item.image_path} alt="" />
                     </div>
                     <div className="">
                       <h4>{item.name}</h4>

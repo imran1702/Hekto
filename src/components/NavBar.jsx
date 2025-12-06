@@ -7,20 +7,27 @@ import { ApiData } from "./ContextApi";
 
 const NavBar = () => {
   let data = useContext(ApiData);
+
   let navigate = useNavigate();
   let [search, setSearch] = useState("");
   let [searchFilter, setSearchFilter] = useState([]);
   let handleSearch = (e) => {
     setSearch(e.target.value);
-    if (e.target.value == "") {
+    if (e.target.value === "") {
       setSearchFilter([]);
     } else {
-      let searchItem = data.filter((item) =>
+      let searchItem = data.info.filter((item) =>
         item.name.toLowerCase().includes(e.target.value.toLowerCase())
       );
-      setSearchFilter(searchItem);
+      let searchItemDummy = data.dummy.filter((item) =>
+        item.title.toLowerCase().includes(e.target.value.toLowerCase())
+      );
+
+      // Merge results
+      setSearchFilter([...searchItem, ...searchItemDummy]);
     }
   };
+
   let handleSearchItem = (item) => {
     navigate(`/products/${item.id}`);
     setSearch("");
@@ -60,7 +67,7 @@ const NavBar = () => {
   useEffect(() => {
     document.addEventListener("click", (e) => {
       if (searchRef.current.contains(e.target)) {
-        setSearchRefState(!searchRefState);
+        setSearchRefState(true);
       } else {
         setSearchRefState(false);
       }
@@ -68,7 +75,7 @@ const NavBar = () => {
   }, []);
 
   return (
-    <section className="py-7">
+    <section className="py-7 hidden md:block">
       <Container>
         <div className="flex justify-between">
           <div className="">
@@ -170,12 +177,12 @@ const NavBar = () => {
                         <div className="w-[100px]">
                           <img
                             className="w-full"
-                            src={item.image_path}
+                            src={item.image_path || item.thumbnail}
                             alt=""
                           />
                         </div>
                         <div className="">
-                          <h2>{item.name}</h2>
+                          <h2>{item.name || item.title}</h2>
                           <h2 className="text-[#FB2E86]">{item.price}TK</h2>
                         </div>
                       </div>

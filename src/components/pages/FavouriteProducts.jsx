@@ -53,7 +53,7 @@ const FavouriteProducts = () => {
                         <div className="flex items-center gap-x-2 sm:gap-x-4">
                           <div className="relative">
                             <img
-                              src={item.image_path}
+                              src={item.image_path || item.thumbnail}
                               alt=""
                               className="h-10 w-12 sm:h-25 sm:w-30"
                             />
@@ -66,7 +66,7 @@ const FavouriteProducts = () => {
                           </div>
                           <div>
                             <h2 className="font-bold font-josefin text-[#000] pb-1 sm:pb-2 text-[8px] sm:text-[16px]">
-                              {item.name}
+                              {item.name || item.title}
                             </h2>
                             <p className="font-medium font-josefin text-[#A1A8C1] pb-1 sm:pb-2 text-[8px] sm:text-[14px]">
                               Finish: {item.finish}
@@ -79,11 +79,11 @@ const FavouriteProducts = () => {
                       </th>
                     </Link>
                     <th className="text-start text-[#1D3178] text-[8px] sm:text-[14px] font-medium font-josefin px-2 sm:px-8">
-                      <p>{item.discount_price} TK</p>
+                      <p>{item.discount_price || item.price} TK</p>
                     </th>
                     <th className="text-start text-[#1D3178] text-[8px] sm:text-[14px] font-medium font-josefin px-2 sm:px-8">
                       <div className="flex items-center gap-x-2">
-                        <p className="capitalize">{item.status}</p>
+                        <p className="capitalize">{item.status || item.availabilityStatus}</p>
                       </div>
                     </th>
                     <th className="text-start text-[#1D3178] text-[8px] sm:text-[14px] font-medium font-josefin px-2 sm:px-8">

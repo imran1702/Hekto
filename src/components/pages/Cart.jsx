@@ -18,7 +18,7 @@ import { useContext, useEffect, useState } from "react";
 import { ApiData } from "../ContextApi";
 
 const Cart = () => {
-  let info = useContext(ApiData);
+  let furApi = useContext(ApiData);
   let [suggested, setSuggested] = useState([]);
   let data = useSelector((state) => state.product.cartItem);
   let dispatch = useDispatch();
@@ -26,7 +26,7 @@ const Cart = () => {
   let { totalPrice, totalDisAmount, totalQuantity } = data.reduce(
     (acc, item) => {
       acc.totalPrice += item.price * item.qun;
-      acc.totalDisAmount += item.price - item.discount_price;
+      acc.totalDisAmount += (item.price - item.discount_price || 0 ) * item.qun;
       acc.totalQuantity += item.qun;
       return acc;
     },
@@ -34,10 +34,10 @@ const Cart = () => {
   );
 
   useEffect(() => {
-    let finterSuggested = [...info].sort(() => 0.5 - Math.random());
+    let finterSuggested = [...furApi.info].sort(() => 0.5 - Math.random());
     let product = finterSuggested.slice(0, 16);
     setSuggested(product);
-  }, [info]);
+  }, [furApi]);
 
   return (
     <section className="py-16">
@@ -70,7 +70,7 @@ const Cart = () => {
                           <div className="flex items-center gap-x-2 sm:gap-x-4">
                             <div className="relative">
                               <img
-                                src={item.image_path}
+                                src={item.image_path || item.thumbnail}
                                 alt=""
                                 className="h-10 w-12 sm:h-25 sm:w-30"
                               />
@@ -83,7 +83,7 @@ const Cart = () => {
                             </div>
                             <div>
                               <h2 className="font-bold font-josefin text-[#000] pb-1 sm:pb-2 text-[8px] sm:text-[16px]">
-                                {item.name}
+                                {item.name || item.title}
                               </h2>
                               <p className="font-medium font-josefin text-[#A1A8C1] pb-1 sm:pb-2 text-[8px] sm:text-[14px]">
                                 Finish: {item.finish}
@@ -96,7 +96,7 @@ const Cart = () => {
                         </th>
                       </Link>
                       <th className="text-start text-[#1D3178] text-[8px] sm:text-[14px] font-medium font-josefin px-2 sm:px-8">
-                        <p>{item.discount_price} TK</p>
+                        <p>{item.price} TK</p>
                       </th>
                       <th className="text-start text-[#1D3178] text-[8px] sm:text-[14px] font-medium font-josefin px-2 sm:px-8">
                         <div className="flex items-center gap-x-2">
@@ -121,7 +121,7 @@ const Cart = () => {
                         </div>
                       </th>
                       <th className="text-start text-[#1D3178] text-[8px] sm:text-[14px] font-medium font-josefin px-2 sm:px-8">
-                        {item.discount_price * item.qun} TK
+                        {(item.price * item.qun).toFixed(2)} TK
                       </th>
                     </tr>
                   ))}
@@ -202,7 +202,7 @@ const Cart = () => {
                         </div>
                         <div className="text-center px-6">
                           <Link
-                            to={"/completeorder"}
+                            to={"/checkout"}
                             className="bg-[#19D16F] w-full py-2 rounded-[5px] inline-block text-white text-[14px] font-bold font-lato"
                           >
                             Proceed To Checkout

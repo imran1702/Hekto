@@ -14,21 +14,32 @@ import {
 } from "../slices/productSlice";
 
 const ProductDetails = () => {
-  let [allProduct, setAllProduct] = useState([]);
   let navigate = useNavigate();
   let dispatch = useDispatch();
   let { id } = useParams();
   let [singleProduct, setSingleProduct] = useState([]);
 
-  let getProductId = () => {
-    axios
-      .get("https://furniture-api.fly.dev/v1/products?limit=100&offset=0")
-      .then((response) => {
-        setAllProduct(response.data.data);
-        let product = response.data.data.find((item) => item.id === id);
-        setSingleProduct(product);
-      });
-  };
+  let getProductId = async () => {
+  try {
+    // id number কিনা আলাদা করে যাচাই করা হচ্ছে
+    let numericId = Number(id);
+
+    // যদি id number হয় তাহলে dummyjson থেকে data পাওয়া যাবে
+    if (!isNaN(numericId)) {
+      let res = await axios.get(`https://dummyjson.com/products/${numericId}`);
+      setSingleProduct(res.data);
+      return;
+    }
+
+    // নাহলে furniture API থেকে পাওয়া যাবে
+    let res = await axios.get("https://furniture-api.fly.dev/v1/products?limit=100&offset=0");
+    let product = res.data.data.find((item) => item.id == id);
+    setSingleProduct(product);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 
   useEffect(() => {
     getProductId();
@@ -54,17 +65,17 @@ const ProductDetails = () => {
           <div className="">
             <img
               className="w-full rounded-[10px]"
-              src={singleProduct.image_path}
+              src={singleProduct.image_path || singleProduct.thumbnail}
               alt=""
             />
           </div>
           <div className="col-span-2">
-            <h2 className="font-lato text-[26px]">{singleProduct.name}</h2>
+            <h2 className="font-lato text-[26px]">{singleProduct.name || singleProduct.title}</h2>
             <ul className="flex gap-3 my-4">
               <li className="bg-[#fc73af] px-3 py-1 rounded-[15px] font-lato">
                 Special Price:{" "}
                 <span className="font-bold">
-                  {singleProduct.discount_price}TK
+                  {singleProduct.discount_price || singleProduct.price}TK
                 </span>
               </li>
               <li className="bg-[#fc73af] px-3 py-1 rounded-[15px] font-lato">

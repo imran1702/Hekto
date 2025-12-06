@@ -1,26 +1,35 @@
 import React, { useContext, useEffect, useState } from "react";
 import Container from "./Container";
-import img from "../assets/image 1166.png";
-import img2 from "../assets/image 15.png";
-import img3 from "../assets/image 1168 (1).png";
 import { initFlowbite } from "flowbite";
 import { CiHeart, CiZoomIn } from "react-icons/ci";
 import { IoCartOutline } from "react-icons/io5";
 import { ApiData } from "./ContextApi";
+import { useDispatch } from "react-redux";
+import { addToCart, favouriteProduct } from "./slices/productSlice";
+import { Link } from "react-router-dom";
 
 const LatestProduct = () => {
   let data = useContext(ApiData);
   let [newArrival, setNewArrival] = useState([]);
   let [bestSellet, setBestSellet] = useState([]);
+  let [grocerys, setGrocerys] = useState([]);
+  let [beauty, setBeauty] = useState([]);
+
+  let dispatch = useDispatch()
 
   useEffect(() => {
     initFlowbite();
-    let gardenProduct = data.filter((item) => item.category === "garden");
+    let gardenProduct = data.info.filter((item) => item.category === "garden");
     let newArrivalProduct = gardenProduct.slice(5, 14);
     setNewArrival(newArrivalProduct);
 
     let bestSelletProduct = gardenProduct.slice(18, 30);
     setBestSellet(bestSelletProduct);
+
+    let groceryItems = data.dummy.filter((item)=> item.category === "groceries")
+    setGrocerys(groceryItems)
+    let beautyItems = data.dummy.filter((item)=> item.category === "beauty")
+    setBeauty(beautyItems)
   }, [data]);
 
   return (
@@ -28,18 +37,18 @@ const LatestProduct = () => {
       <Container>
         <div className="text-center">
           <div className="">
-            <h2 className="font-jose text-[#151875] text-[42px]">
+            <h2 className="font-jose text-[#151875] mb-3 md:text-[42px]">
               Leatest Products
             </h2>
             <div className="">
               <ul
-                className="flex justify-center gap-x-3 sm:gap-x-0 flex-wrap -mb-px text-[10px] sm:text-sm md:text-xl font-medium font-josefin text-center"
+                className="flex justify-center mb-2 gap-x-3 sm:gap-x-0 flex-wrap text-[10px] sm:text-sm md:text-xl font-medium font-josefin text-center"
                 id="default-tab"
                 data-tabs-toggle="#default-tab-content"
                 role="tablist"
               >
                 <li
-                  className={`text-[#151875] text-[18px] hover:underline hover:text-[#FB2E86] cursor-pointer`}
+                  className={`text-[#151875] hover:underline hover:text-[#FB2E86] cursor-pointer`}
                 >
                   <button
                     className="inline-block p-0 sm:p-4 text-[#151875] cursor-pointer hover:text-red-500"
@@ -76,20 +85,20 @@ const LatestProduct = () => {
                     aria-controls="featured"
                     aria-selected="false"
                   >
-                    Featured
+                    Groceries
                   </button>
                 </li>
                 <li className="" role="presentation">
                   <button
                     className="inline-block p-0 sm:p-4 hover:text-red-500 text-[#151875] cursor-pointer"
-                    id="specialOffer-tab"
-                    data-tabs-target="#specialOffer"
+                    id="beauty-tab"
+                    data-tabs-target="#beauty"
                     type="button"
                     role="tab"
-                    aria-controls="specialOffer"
+                    aria-controls="beauty"
                     aria-selected="false"
                   >
-                    Special Offer
+                    Beauty
                   </button>
                 </li>
               </ul>
@@ -109,16 +118,16 @@ const LatestProduct = () => {
                       <div className="bg-[#F7F7F7]">
                         <img src={item.image_path} alt="" />
                       </div>
-                      <div className="flex justify-between">
-                        <p>{item.name}</p>
-                        <p>{item.discount_price} TK</p>
-                        <s className="text-[#FB2448]">{item.price} TK</s>
+                      <div className="sm:flex justify-between">
+                        <p className="text-[13px] sm:text-[18px]">{item.name}</p>
+                        <p  className="text-[13px] sm:text-[18px]">{item.discount_price} TK</p>
+                        <s className="text-[#FB2448] text-[13px] sm:text-[18px]">{item.price} TK</s>
                       </div>
                       <div className="absolute left-3 top-1 text-[25px] invisible group-hover:visible group-hover:text-[#000]">
-                        <div className="hover:text-[#FB2E86]">
+                        <div onClick={()=>dispatch(addToCart({...item, qun: 1}))} className="hover:text-[#FB2E86]">
                           <IoCartOutline />
                         </div>
-                        <div className="hover:text-[#FB2E86]">
+                        <div onClick={()=>dispatch(favouriteProduct({...item}))} className="hover:text-[#FB2E86]">
                           <CiHeart />
                         </div>
                         <div className="hover:text-[#FB2E86]">
@@ -139,21 +148,21 @@ const LatestProduct = () => {
             >
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {bestSellet.map((item) => (
-                  <div className="">
+                    <Link to={`/products/${item.id}`}>
                     <div className="group relative">
                       <div className="bg-[#F7F7F7]">
                         <img src={item.image_path} alt="" />
                       </div>
-                      <div className="flex">
-                        <p>{item.name}</p>
-                        <p>{item.discount_price} TK</p>
-                        <s className="text-[#FB2448]">{item.price} TK</s>
+                      <div className="sm:flex">
+                        <p className="text-[13px] sm:text-[18px]">{item.name}</p>
+                        <p className="text-[13px] sm:text-[18px]">{item.discount_price} TK</p>
+                        <s className="text-[#FB2448] text-[13px] sm:text-[18px]">{item.price} TK</s>
                       </div>
                       <div className="absolute left-3 top-1 text-[25px] invisible group-hover:visible group-hover:text-[#000]">
-                        <div className="hover:text-[#FB2E86]">
+                        <div onClick={()=>dispatch(addToCart({...item, qun: 1}))} className="hover:text-[#FB2E86]">
                           <IoCartOutline />
                         </div>
-                        <div className="hover:text-[#FB2E86]">
+                        <div onClick={()=>dispatch(favouriteProduct({...item}))} className="hover:text-[#FB2E86]">
                           <CiHeart />
                         </div>
                         <div className="hover:text-[#FB2E86]">
@@ -161,7 +170,7 @@ const LatestProduct = () => {
                         </div>
                       </div>
                     </div>
-                  </div>
+                    </Link>
                 ))}
               </div>
             </div>
@@ -173,79 +182,65 @@ const LatestProduct = () => {
               aria-labelledby="featured-tab"
             >
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                <div className="grid grid-cols-3 items-center">
-                  <div className="">
+                  {grocerys.map((item)=>(
+                    <Link to={`/products/${item.id}`}>
+                  <div className="relative group">
                     <div className="bg-[#F7F7F7]">
-                      <img src={img2} alt="" />
+                      <img src={item.thumbnail} alt="" />
                     </div>
-                    <div className="flex">
-                      <p>Comfort Handy Craft</p>
-                      <p>$42.00</p>
-                      <s className="text-[#FB2448]">$65.00</s>
+                    <div className="sm:flex">
+                      <p className="text-[13px] sm:text-[18px]">{item.title}</p>
+                      <p className="text-[13px] sm:text-[18px]">{item.price} TK</p>
+                      <s className="text-[#FB2448] text-[13px] sm:text-[18px]">{item.price}</s>
                     </div>
+                    <div className="absolute left-3 top-1 text-[25px] invisible group-hover:visible group-hover:text-[#000]">
+                        <div onClick={()=>dispatch(addToCart({...item, qun: 1}))} className="hover:text-[#FB2E86]">
+                          <IoCartOutline />
+                        </div>
+                        <div onClick={()=>dispatch(favouriteProduct({...item}))} className="hover:text-[#FB2E86]">
+                          <CiHeart />
+                        </div>
+                        <div className="hover:text-[#FB2E86]">
+                          <CiZoomIn />
+                        </div>
+                      </div>
                   </div>
-                  <div className="">
-                    <div className="bg-[#F7F7F7]">
-                      <img src={img2} alt="" />
-                    </div>
-                    <div className="flex">
-                      <p>Comfort Handy Craft</p>
-                      <p>$42.00</p>
-                      <s className="text-[#FB2448]">$65.00</s>
-                    </div>
-                  </div>
-                  <div className="">
-                    <div className="bg-[#F7F7F7]">
-                      <img src={img2} alt="" />
-                    </div>
-                    <div className="flex">
-                      <p>Comfort Handy Craft</p>
-                      <p>$42.00</p>
-                      <s className="text-[#FB2448]">$65.00</s>
-                    </div>
-                  </div>
-                </div>
+                    </Link>
+                  ))}
               </div>
             </div>
             <div
               className="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800"
-              id="specialOffer"
+              id="beauty"
               role="tabpanel"
-              aria-labelledby="specialOffer-tab"
+              aria-labelledby="beauty-tab"
             >
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                <div className="grid grid-cols-3 items-center">
-                  <div className="">
+                {beauty.map((item)=>(
+                  <Link to={`/products/${item.id}`}>
+                  <div className="relative group">
                     <div className="bg-[#F7F7F7]">
-                      <img src={img} alt="" />
+                      <img src={item.thumbnail} alt="" />
                     </div>
-                    <div className="flex">
-                      <p>Comfort Handy Craft</p>
-                      <p>$42.00</p>
-                      <s className="text-[#FB2448]">$65.00</s>
+                    <div className="sm:flex">
+                      <p className="text-[13px] sm:text-[18px]">{item.title}</p>
+                      <p className="text-[13px] sm:text-[18px]">{item.price} TK</p>
+                      <s className="text-[#FB2448] text-[13px] sm:text-[18px]">{item.price} TK</s>
                     </div>
+                    <div className="absolute left-3 top-1 text-[25px] invisible group-hover:visible group-hover:text-[#000]">
+                        <div onClick={()=>dispatch(addToCart({...item, qun: 1}))} className="hover:text-[#FB2E86]">
+                          <IoCartOutline />
+                        </div>
+                        <div onClick={()=>dispatch(favouriteProduct({...item}))} className="hover:text-[#FB2E86]">
+                          <CiHeart />
+                        </div>
+                        <div className="hover:text-[#FB2E86]">
+                          <CiZoomIn />
+                        </div>
+                      </div>
                   </div>
-                  <div className="">
-                    <div className="bg-[#F7F7F7]">
-                      <img src={img} alt="" />
-                    </div>
-                    <div className="flex">
-                      <p>Comfort Handy Craft</p>
-                      <p>$42.00</p>
-                      <s className="text-[#FB2448]">$65.00</s>
-                    </div>
-                  </div>
-                  <div className="">
-                    <div className="bg-[#F7F7F7]">
-                      <img src={img} alt="" />
-                    </div>
-                    <div className="flex">
-                      <p>Comfort Handy Craft</p>
-                      <p>$42.00</p>
-                      <s className="text-[#FB2448]">$65.00</s>
-                    </div>
-                  </div>
-                </div>
+                  </Link>
+                ))}
               </div>
             </div>
           </div>

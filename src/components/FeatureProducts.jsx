@@ -43,30 +43,45 @@ const FeatureProducts = () => {
   // slick arrows end
 
   const settings = {
-    dots: false,
-    infinite: true,
-    focusOnSelect: true,
-    slidesToShow: 4,
-    slidesToScroll: 1,
-    nextArrow: <SampleNextArrow />,
-    prevArrow: <SamplePrevArrow />,
-  };
+  dots: false,
+  infinite: true,
+  focusOnSelect: true,
+  slidesToShow: 4,
+  slidesToScroll: 1,
+  nextArrow: <SampleNextArrow />,
+  prevArrow: <SamplePrevArrow />,
+  responsive: [
+    {
+      breakpoint: 1024,
+      settings: {
+        slidesToShow: 3,
+      },
+    },
+    {
+      breakpoint: 768,
+      settings: {
+        slidesToShow: 1,
+      },
+    },
+  ],
+};
+
 
   return (
-    <section className="py-10">
+    <section className="md:py-10 py-5">
       <Container>
         <div className="">
-          <div className="text-center">
-            <h2 className="text-[#1A0B5B] font-jose text-[42px]">
+          <div className="text-center mb-3">
+            <h2 className="text-[#1A0B5B] font-jose md:text-[42px]">
               Featured Products
             </h2>
           </div>
-          <div className="justify-between">
+          <div className="md:justify-between md:w-full mx-auto">
             <Link to="/products">
               <Slider {...settings}>
-                {data.map((item) => (
+                {data.info.map((item) => (
                   <div className="group relative px-3">
-                    <div className="flex gap-3 absolute left-3 top-1 text-[25px] invisible group-hover:visible group-hover:text-[#fff]">
+                    <div className="flex gap-3 absolute left-45 md:left-3 top-1 text-[25px] invisible group-hover:visible group-hover:text-[#fff]">
                       <div
                         onClick={() => dispatch(addToCart({ ...item, qun: 1 }))}
                         className="hover:text-[#FB2E86]"
@@ -85,10 +100,10 @@ const FeatureProducts = () => {
                         <CiZoomIn />
                       </div>
                     </div>
-                    <div className="bg-[#F6F7FB]">
-                      <img className="mx-auto" src={item.image_path} alt="" />
+                    <div className="bg-[#F6F7FB] md:w-full w-[250px] mx-auto">
+                      <img className="mx-auto w-full" src={item.image_path} alt="" />
                     </div>
-                    <div className="text-center py-2 group-hover:bg-[#2F1AC4] group-hover:text-[#fff]">
+                    <div className="text-center py-2 group-hover:bg-[#2F1AC4] group-hover:text-[#fff] w-[250px] mx-auto md:w-full">
                       <h5 className="text-[#FB2E86] font-[Leto] text-[18px] group-hover:text-[#fff]">
                         {item.name}
                       </h5>

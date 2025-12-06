@@ -6,7 +6,12 @@ const Shop = () => {
     <section>
         <Container>
             <div className="">
-                
+                <div className="">
+                  <h2>Furnitures</h2>
+                </div>
+                <div className="">
+                  <h2>Grocerys</h2>
+                </div>
             </div>
         </Container>
     </section>

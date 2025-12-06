@@ -18,6 +18,12 @@ import Error from "./components/pages/Error";
 import SignUp from "./components/pages/SignUp";
 import FavouriteProducts from "./components/pages/FavouriteProducts";
 import CompleteOrder from "./components/pages/CompleteOrder";
+import { FaHome } from "react-icons/fa";
+import UserDashboard from "./components/pages/UserDashboard";
+import AddressBook from "./components/pages/AddressBook";
+import CheckoutPage from "./components/pages/CheckOut";
+import OrderSuccess from "./components/pages/OrderSucces";
+import OrderHistory from "./components/pages/UserOrderHistory";
 
 let routing = createBrowserRouter(
   createRoutesFromElements(
@@ -38,6 +44,11 @@ let routing = createBrowserRouter(
         <Route path="/contact" element={<Contact />}></Route>
         <Route path="/login" element={<Login />}></Route>
         <Route path="/signup" element={<SignUp />}></Route>
+        <Route path="/dashboard" element={<UserDashboard />}></Route>
+        <Route path="/dashboard" element={<UserDashboard />}></Route>
+        <Route path="/checkout" element={<CheckoutPage />}></Route>
+        <Route path="/order-success" element={<OrderSuccess />}></Route>
+        <Route path="/order-history" element={<OrderHistory />}></Route>
       </Route>
       <Route path="*" element={<Error />}></Route>
     </>
@@ -48,6 +59,17 @@ function App() {
   return (
     <>
       <RouterProvider router={routing}></RouterProvider>
+      <div className="fixed bottom-0 flex justify-between w-full bg-fuchsia-300 sm:hidden">
+        <div className="">
+          <FaHome />
+        </div>
+        <div className="">
+          <FaHome />
+        </div>
+        <div className="">
+          <FaHome />
+        </div>
+      </div>
     </>
   );
 }
