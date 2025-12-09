@@ -45,7 +45,6 @@ let routing = createBrowserRouter(
         <Route path="/login" element={<Login />}></Route>
         <Route path="/signup" element={<SignUp />}></Route>
         <Route path="/dashboard" element={<UserDashboard />}></Route>
-        <Route path="/dashboard" element={<UserDashboard />}></Route>
         <Route path="/checkout" element={<CheckoutPage />}></Route>
         <Route path="/order-success" element={<OrderSuccess />}></Route>
         <Route path="/order-history" element={<OrderHistory />}></Route>
