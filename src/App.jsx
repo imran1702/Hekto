@@ -24,6 +24,8 @@ import AddressBook from "./components/pages/AddressBook";
 import CheckoutPage from "./components/pages/CheckOut";
 import OrderSuccess from "./components/pages/OrderSucces";
 import OrderHistory from "./components/pages/UserOrderHistory";
+import OrderDetail from "./components/pages/OrderDetail";
+import DashboardOrders from "./components/pages/DashboardOrders";
 
 let routing = createBrowserRouter(
   createRoutesFromElements(
@@ -46,6 +48,8 @@ let routing = createBrowserRouter(
         <Route path="/signup" element={<SignUp />}></Route>
         <Route path="/dashboard" element={<UserDashboard />}></Route>
         <Route path="/checkout" element={<CheckoutPage />}></Route>
+        <Route path="/dashboard/orders" element={<DashboardOrders />} />
+        <Route path="/dashboard/order/:orderId" element={<OrderDetail />} />
         <Route path="/order-success" element={<OrderSuccess />}></Route>
         <Route path="/order-history" element={<OrderHistory />}></Route>
       </Route>
