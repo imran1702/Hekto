@@ -7,24 +7,27 @@ import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import logo from "../assets/Hekto.png";
 import { ApiData } from "./ContextApi";
-import { IoIosSearch } from "react-icons/io";
-import { FaBars } from "react-icons/fa";
+import { IoIosSearch, IoMdArrowBack } from "react-icons/io";
+import { FaBars } from "react-icons/fa"; // এটি এখন আর মোবাইলে ব্যবহার হচ্ছে না, তবে ডেস্কটপ বা ভবিষ্যতের জন্য রাখা হলো
 import { ImCross } from "react-icons/im";
 
 // ⭐️ Firebase Auth Imports
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../firebase.config"; // ধরে নিলাম আপনার auth এক্সপোর্ট এখানে আছে
+import { auth } from "../firebase.config";
 
 const Header = () => {
   let data = useSelector((state) => state.product.cartItem);
-
   let apiData = useContext(ApiData);
-
   let navigate = useNavigate();
+
+  // Search States
   let [search, setSearch] = useState("");
   let [searchFilter, setSearchFilter] = useState([]);
 
-  // ⭐️ নতুন স্টেট: লগইন করা ইউজারকে ট্র্যাক করার জন্য
+  // ⭐️ Mobile Search Toggle State
+  const [showMobileSearch, setShowMobileSearch] = useState(false);
+
+  // Auth State
   const [loggedInUser, setLoggedInUser] = useState(null);
 
   let handleSearch = (e) => {
@@ -38,8 +41,6 @@ const Header = () => {
       let searchItemDummy = apiData.dummy.filter((item) =>
         item.title.toLowerCase().includes(e.target.value.toLowerCase())
       );
-
-      // Merge results
       setSearchFilter([...searchItem, ...searchItemDummy]);
     }
   };
@@ -48,6 +49,7 @@ const Header = () => {
     navigate(`/products/${item.id}`);
     setSearch("");
     setSearchFilter([]);
+    setShowMobileSearch(false);
   };
 
   let [activeIndex, setActiveIndex] = useState(-1);
@@ -71,12 +73,9 @@ const Header = () => {
 
   let itemRefs = useRef([]);
   let searchRef = useRef();
-  let menuRef = useRef();
   let [searchRefState, setSearchRefState] = useState(false);
-  let [menu, setMenu] = useState(false);
 
   useEffect(() => {
-    // ⭐️ Auth স্টেট পরিবর্তন ট্র্যাক করার জন্য নতুন লজিক
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setLoggedInUser(user);
     });
@@ -93,116 +92,112 @@ const Header = () => {
       } else {
         setSearchRefState(false);
       }
-
-      if (menuRef.current && menuRef.current.contains(e.target)) {
-        setMenu((prevMenu) => !prevMenu); // prevState ব্যবহার করে আপডেট করা হলো
-      } else {
-        setMenu(false);
-      }
     };
 
     document.addEventListener("click", handleClick);
 
-    // Cleanup function for both listeners
     return () => {
       document.removeEventListener("click", handleClick);
-      unsubscribe(); // Auth listener clean up
+      unsubscribe();
     };
-  }, [activeIndex]); // menu dependency সরানো হলো, কারণhandleClick ফাংশনের মাধ্যমে toggle করা হচ্ছে
+  }, [activeIndex]);
 
   return (
-    <section className="md:bg-[#7E33E0] text-[#F1F1F1] py-3">
+    <section className="bg-[#7E33E0] text-[#F1F1F1] py-3 hidden md:block">
       <Container>
-        {/* Mobile Menu & Search (unchanged) */}
-        <div className="md:hidden relative flex items-center justify-between gap-x-2">
-          <Link to="/">
-            <div className="w-full">
-              <img src={logo} alt="" />
-            </div>
-          </Link>
-          <div className="flex items-center relative">
-            <input
-              ref={searchRef}
-              onChange={handleSearch}
-              onKeyDown={handleKeyDown}
-              className="bg-[#E7E6EF] py-1 w-[180px] ps-2 text-black"
-              value={search}
-              type="search"
-              placeholder="Search..."
-            />
-            <div className="absolute right-0 bg-[#FB2E86] text-[#fff] p-2 cursor-pointer">
-              <IoIosSearch />
-            </div>
-            {searchRefState && (
-              <>
-                {searchFilter.length > 0 && (
-                  <div className="absolute z-[9999] p-3 right-0 top-8 w-[300px] h-[450px] overflow-y-scroll bg-[#ffffff] shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]">
+        {/* =========================================
+            ⭐️ MOBILE VIEW START (md:hidden)
+           ========================================= */}
+        <div className="md:hidden relative">
+          {/* CONDITION 1: যখন সার্চ বার খোলা থাকবে */}
+          {showMobileSearch ? (
+            <div className="flex items-center w-full gap-2 animate-fadeIn">
+              {/* Back Button */}
+              <div
+                onClick={() => setShowMobileSearch(false)}
+                className="text-white text-2xl cursor-pointer"
+              >
+                <IoMdArrowBack />
+              </div>
+
+              {/* Search Input Area */}
+              <div className="flex items-center relative flex-grow">
+                <input
+                  ref={searchRef}
+                  onChange={handleSearch}
+                  onKeyDown={handleKeyDown}
+                  className="bg-[#E7E6EF] py-1 ps-2 pe-10 w-full text-black placeholder-gray-500 rounded-s focus:outline-none"
+                  value={search}
+                  type="search"
+                  placeholder="Search products..."
+                  autoFocus
+                />
+                <div className="absolute right-0 bg-[#FB2E86] text-[#fff] h-full w-[40px] flex justify-center items-center cursor-pointer rounded-e">
+                  <IoIosSearch />
+                </div>
+
+                {/* Search Result Dropdown */}
+                {searchRefState && searchFilter.length > 0 && (
+                  <div className="absolute z-[9999] p-2 left-0 right-0 top-10 w-full max-h-[350px] overflow-y-scroll bg-[#ffffff] shadow-xl rounded-md">
                     {searchFilter.map((item, index) => (
                       <div
                         onClick={() => handleSearchItem(item)}
                         ref={(el) => (itemRefs.current[index] = el)}
-                        className={`flex gap-3 mb-2 p-2 items-center cursor-pointer bg-[#ffffff] shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)] ${
+                        className={`flex gap-3 mb-2 p-2 items-center cursor-pointer text-black rounded-md border-b last:border-0 ${
                           activeIndex === index
-                            ? "bg-gray-200 text-[#262626] rounded-[5px]"
-                            : ""
+                            ? "bg-gray-200"
+                            : "hover:bg-gray-100"
                         }`}
                         key={item.id || item.title}
                       >
-                        <div className="w-[50px]">
+                        <div className="w-[40px] h-[40px] flex-shrink-0">
                           <img
-                            className="w-full"
+                            className="w-full h-full object-contain"
                             src={item.image_path || item.thumbnail}
-                            alt={item.name || item.title}
+                            alt={item.name}
                           />
                         </div>
-                        <div className="">
-                          <h2 className="text-black">
+                        <div className="flex-grow">
+                          <h2 className="text-xs font-bold line-clamp-1">
                             {item.name || item.title}
                           </h2>
-                          <h2 className="text-[#FB2E86]">{item.price}TK</h2>
+                          <h2 className="text-[#FB2E86] font-semibold text-xs">
+                            {item.price}TK
+                          </h2>
                         </div>
                       </div>
                     ))}
                   </div>
                 )}
-              </>
-            )}
-          </div>
-          <div className="">
-            <div
-              ref={menuRef}
-              className="text-black text-[25px] font-bold cursor-pointer"
-            >
-              <FaBars />
+              </div>
             </div>
-            {menu && (
-              <div className="absolute left-0 top-0 bg-[#FF00FF] z-[9999] w-50 flex justify-between">
-                <ul className="p-3">
-                  <Link to="/">
-                    <li className="hover:ps-5">Home</li>
-                  </Link>
-                  <Link to="/products">
-                    <li className="hover:ps-5">Products</li>
-                  </Link>
-                  <Link to="/blog">
-                    <li className="hover:ps-5">Blog</li>
-                  </Link>
-                  <Link to="shop">
-                    <li className="hover:ps-5">Shop</li>
-                  </Link>
-                  <Link to="/contact">
-                    <li className="hover:ps-5">Contact</li>
-                  </Link>
-                </ul>
-                <div className="">
-                  <ImCross />
+          ) : (
+            /* CONDITION 2: সাধারণ অবস্থা (শুধুমাত্র Logo + Search Icon) */
+            <div className="flex items-center justify-between gap-x-2">
+              {/* Logo */}
+              <Link to="/">
+                <div className="w-[80px] sm:w-[100px]">
+                  <img src={logo} alt="Hekto Logo" className="w-full" />
+                </div>
+              </Link>
+
+              {/* Right Side - ONLY Search Icon */}
+              <div className="flex items-center text-white">
+                <div
+                  onClick={() => setShowMobileSearch(true)}
+                  className="text-[24px] cursor-pointer hover:text-[#FB2E86] transition-colors p-1"
+                >
+                  <IoIosSearch />
                 </div>
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
+        {/* ⭐️ MOBILE VIEW END */}
 
-        {/* Desktop View (Change applied here) */}
+        {/* =========================================
+            DESKTOP VIEW (md:block) - No Changes
+           ========================================= */}
         <div className="hidden md:block">
           <div className="flex items-center justify-between">
             <div className="flex gap-10 items-center">
@@ -210,62 +205,77 @@ const Header = () => {
                 <div className="text-[#fff] text-[20px] font-bold">
                   <CiMail />
                 </div>
-                <p className="font-[Josefin Sans]">arfozian@gmail.com</p>
+                <p className="font-[Josefin Sans] text-sm">
+                  arfozian@gmail.com
+                </p>
               </div>
               <div className="flex items-center gap-1">
                 <div className="text-[#fff] text-[20px] font-bold">
                   <MdOutlinePhoneInTalk />
                 </div>
-                <p>+8801626681923</p>
+                <p className="text-sm">+8801626681923</p>
               </div>
             </div>
             <div className="flex items-center gap-5">
               <div className="flex items-center">
-                <select name="" id="language">
-                  <option value="english">English</option>
-                  <option value="bengali">Bengali</option>
+                <select
+                  id="language"
+                  className="bg-transparent text-white focus:outline-none text-sm cursor-pointer"
+                >
+                  <option value="english" className="text-black">
+                    English
+                  </option>
+                  <option value="bengali" className="text-black">
+                    Bengali
+                  </option>
                 </select>
               </div>
               <div className="flex items-center">
-                <select name="" id="curency">
-                  <option value="usd">USD</option>
-                  <option value="bdt">BDT</option>
+                <select
+                  id="curency"
+                  className="bg-transparent text-white focus:outline-none text-sm cursor-pointer"
+                >
+                  <option value="usd" className="text-black">
+                    USD
+                  </option>
+                  <option value="bdt" className="text-black">
+                    BDT
+                  </option>
                 </select>
               </div>
 
-              {/* ⭐️ এখানে পরিবর্তন করা হয়েছে: নাম/আইকন এর পরিবর্তে ছবি */}
               <Link to="/dashboard">
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1 hover:opacity-80 transition duration-150">
                   {loggedInUser ? (
                     loggedInUser.photoURL ? (
                       <img
                         src={loggedInUser.photoURL}
-                        alt={loggedInUser.displayName || "User"}
+                        alt="User"
                         className="w-6 h-6 rounded-full object-cover border border-white"
                       />
                     ) : (
-                      // যদি ছবি না থাকে, কিন্তু লগইন থাকে, তবে RiContactsLine আইকন
                       <RiContactsLine className="text-[20px] font-bold" />
                     )
                   ) : (
-                    // যদি লগইন না থাকে, তবে 'Login' টেক্সট এবং RiContactsLine আইকন
-                    <>
-                      <p className="font-lato">Login</p>
-                      <RiContactsLine className="text-[20px] font-bold" />
-                    </>
+                    <p className="font-lato text-sm">Login</p>
                   )}
-                  {/* লগইন থাকা অবস্থায় নাম বা 'My Account' দেখানোর অংশটি হাইড করা হলো */}
-                  {loggedInUser && loggedInUser.photoURL && (
-                    <p className="hidden md:block font-lato">
-                      {loggedInUser.displayName || "My Account"}
-                    </p>
+                  {loggedInUser &&
+                    (loggedInUser.photoURL ? (
+                      <p className="font-lato text-sm">
+                        {loggedInUser.displayName || "My Account"}
+                      </p>
+                    ) : (
+                      <RiContactsLine className="text-[20px] font-bold" />
+                    ))}
+                  {!loggedInUser && (
+                    <RiContactsLine className="text-[20px] font-bold" />
                   )}
                 </div>
               </Link>
 
               <Link to="/favouriteProducts">
-                <div className="flex items-center">
-                  <p>Wishlist</p>
+                <div className="flex items-center gap-1 hover:opacity-80 transition duration-150">
+                  <p className="text-sm">Wishlist</p>
                   <div className="text-[#fff] text-[20px] font-bold">
                     <CiHeart />
                   </div>
@@ -276,7 +286,7 @@ const Header = () => {
                   <div className="font-bold ">
                     <CiShoppingCart />
                   </div>
-                  <div className="absolute bottom-3 left-5 bg-[#dedede] min-h-[25px] min-w-[25px] rounded-full leading-[25px] text-center text-[#FB2E86]">
+                  <div className="absolute -bottom-1 -right-1 bg-[#dedede] h-4 w-4 rounded-full flex items-center justify-center text-[10px] text-[#FB2E86] font-bold">
                     {data.length}
                   </div>
                 </Link>
